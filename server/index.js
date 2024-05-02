@@ -34,19 +34,26 @@ const MONGO_URL = process.env.MONGO_URL;
 
 // **Error Handling Function**
 function handleError(error) {
-  console.error('Error:', error);
+  if (error.name === 'MongooseServerSelectionError') {
+    console.error('Failed to connect to MongoDB Atlas. Check your connection string and network settings.');
+  } else {
+    console.error('Error:', error);
+  }
   process.exit(1); // Exit with an error code if something goes wrong
 }
+
 
 // **Database Connection**
 async function connectToDatabase() {
   try {
+    console.log('Connecting to MongoDB:', MONGO_URL);
     await mongoose.connect(MONGO_URL);
     console.log('MongoDB connection established successfully.');
   } catch (error) {
     handleError(error);
   }
 }
+
 
 // **Server Startup Ensure database connection**
 async function startServer() {
